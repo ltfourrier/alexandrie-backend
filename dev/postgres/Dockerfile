@@ -1,0 +1,4 @@
+FROM postgres:13
+
+ENV POSTGRES_USER=alexandrie
+ENV POSTGRES_PASSWORD=password
