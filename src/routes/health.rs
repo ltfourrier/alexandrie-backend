@@ -1,14 +1,12 @@
 use actix_web::{get, HttpResponse, Result};
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize)]
 struct Health {
     status: &'static str,
 }
 
 #[get("/health")]
 pub async fn get_health() -> Result<HttpResponse> {
-    Ok(HttpResponse::Ok().json(Health {
-        status: "OK",
-    }))
+    Ok(HttpResponse::Ok().json(Health { status: "OK" }))
 }

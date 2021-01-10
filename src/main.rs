@@ -1,26 +1,50 @@
-mod routes;
+use std::str::FromStr;
 
+use actix_web::{App, HttpServer, web};
+use anyhow::Result;
+use log::LevelFilter;
+use simple_logger::SimpleLogger;
+use sqlx::postgres::PgPoolOptions;
+
+use configuration::read_configuration;
 use routes::*;
 
-use actix_web::{web, App, HttpServer};
-use anyhow::Result;
-use sqlx::postgres::PgPoolOptions;
-use simple_logger::SimpleLogger;
-use log::LevelFilter;
+mod configuration;
+mod routes;
 
 #[actix_web::main]
 async fn main() -> Result<()> {
-    SimpleLogger::new().with_level(LevelFilter::Info).init()?;
+    let config = read_configuration()?;
+
+    SimpleLogger::new()
+        .with_level(LevelFilter::from_str(config.log.level.as_str())?)
+        .init()?;
 
     let db_pool = PgPoolOptions::new()
-        .max_connections(10)
-        .connect("postgresql://alexandrie:password@localhost/alexandrie")
+        .max_connections(config.database.max_connections)
+        .connect(
+            format!(
+                "postgresql://{}:{}@{}:{}/{}",
+                config.database.username,
+                config.database.password,
+                config.database.host,
+                config.database.port,
+                config.database.database
+            )
+                .as_str(),
+        )
         .await?;
 
     sqlx::migrate!().run(&db_pool).await?;
 
     HttpServer::new(|| App::new().service(web::scope("/v1").service(get_health)))
-        .bind("127.0.0.1:8080")?
+        .bind(
+            format!(
+                "{}:{}",
+                config.server.listen_address, config.server.listen_port
+            )
+                .as_str(),
+        )?
         .run()
         .await?;
 

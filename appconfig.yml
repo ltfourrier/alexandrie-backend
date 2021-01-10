@@ -1,0 +1,12 @@
+log:
+  level: INFO
+server:
+  listen_address: "127.0.0.1"
+  listen_port: 8080
+database:
+  username: alexandrie
+  password: password
+  host: localhost
+  port: 5432
+  database: alexandrie
+  max_connections: 10
