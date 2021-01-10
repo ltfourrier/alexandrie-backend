@@ -58,7 +58,7 @@ pub fn read_configuration() -> Result<Configuration, ConfigError> {
     // Check if the user sent us a configuration path through arguments too
     match retrieve_path_from_args() {
         Some(custom_path) => {
-            configuration.merge(File::with_name(custom_path.as_str()));
+            configuration.merge(File::with_name(custom_path.as_str()))?;
         }
         None => (),
     };
