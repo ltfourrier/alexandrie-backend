@@ -306,13 +306,14 @@ dependencies = [
 name = "alexandrie-backend"
 version = "0.1.0"
 dependencies = [
- "actix-web",
- "anyhow",
- "config",
- "log",
- "serde 1.0.118",
- "simple_logger",
- "sqlx",
+    "actix-web",
+    "anyhow",
+    "config",
+    "derive_more",
+    "log",
+    "serde 1.0.118",
+    "simple_logger",
+    "sqlx",
 ]
 
 [[package]]

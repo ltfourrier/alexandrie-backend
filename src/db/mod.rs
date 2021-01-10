@@ -1,7 +1,9 @@
-use sqlx::{Pool, Postgres, Result};
 use sqlx::postgres::PgPoolOptions;
+use sqlx::{Pool, Postgres, Result};
 
 use crate::configuration::DatabaseConfiguration;
+
+pub mod users;
 
 /// Initialize the connection to the database using the given configuration. This function also
 /// initializes the database itself if necessary, by running migrations for example.
