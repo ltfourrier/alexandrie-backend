@@ -23,7 +23,7 @@ pub async fn init_db(db_config: &DatabaseConfiguration) -> Result<Pool<Postgres>
                 db_config.port,
                 db_config.database
             )
-                .as_str(),
+            .as_str(),
         )
         .await?;
 

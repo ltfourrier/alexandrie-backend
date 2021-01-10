@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use actix_web::{App, HttpServer, web};
+use actix_web::{web, App, HttpServer};
 use anyhow::Result;
 use log::LevelFilter;
 use simple_logger::SimpleLogger;
@@ -29,15 +29,15 @@ async fn main() -> Result<()> {
                 .configure(routes::users::init),
         )
     })
-        .bind(
-            format!(
-                "{}:{}",
-                config.server.listen_address, config.server.listen_port
-            )
-                .as_str(),
-        )?
-        .run()
-        .await?;
+    .bind(
+        format!(
+            "{}:{}",
+            config.server.listen_address, config.server.listen_port
+        )
+        .as_str(),
+    )?
+    .run()
+    .await?;
 
     Ok(())
 }

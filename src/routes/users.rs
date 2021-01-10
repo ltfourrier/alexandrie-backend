@@ -29,8 +29,8 @@ async fn post_users(
             last_name: user.last_name,
         },
     )
-        .await
-        .map_err(|err| -> DatabaseError { err.into() })?;
+    .await
+    .map_err(|err| -> DatabaseError { err.into() })?;
 
     Ok(HttpResponse::Created().finish())
 }

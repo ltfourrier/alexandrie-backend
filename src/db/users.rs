@@ -1,4 +1,4 @@
-use sqlx::{PgPool, query, Result};
+use sqlx::{query, PgPool, Result};
 
 pub struct CreateUser {
     pub username: String,
@@ -29,8 +29,8 @@ pub async fn create_user(pool: &PgPool, create_user: CreateUser) -> Result<i64> 
         create_user.first_name,
         create_user.last_name
     )
-        .fetch_one(pool)
-        .await?;
+    .fetch_one(pool)
+    .await?;
 
     Ok(created_user.id)
 }
