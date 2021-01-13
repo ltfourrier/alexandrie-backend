@@ -34,3 +34,53 @@ pub async fn create_user(pool: &PgPool, create_user: CreateUser) -> Result<i64> 
 
     Ok(created_user.id)
 }
+
+#[cfg(test)]
+mod tests {
+    use fake::faker::internet::en::{SafeEmail, Username};
+    use fake::faker::name::en::{FirstName, LastName};
+    use fake::Fake;
+
+    use crate::db::tests::init_test_db;
+
+    use super::*;
+
+    #[actix_rt::test]
+    async fn test_create_user() {
+        let db_pool = init_test_db().await.unwrap();
+
+        let username: String = Username().fake();
+        let email: String = SafeEmail().fake();
+        let first_name: String = FirstName().fake();
+        let last_name: String = LastName().fake();
+
+        let user_id = create_user(
+            &db_pool,
+            CreateUser {
+                username: username.clone(),
+                email: email.clone(),
+                first_name: Some(first_name.clone()),
+                last_name: Some(last_name.clone()),
+            },
+        )
+        .await
+        .unwrap();
+
+        let user = query!(
+            r#"
+            SELECT *
+            FROM users
+            WHERE id = $1
+            "#,
+            user_id
+        )
+        .fetch_one(&db_pool)
+        .await
+        .unwrap();
+
+        assert_eq!(user.username, username);
+        assert_eq!(user.email, email);
+        assert_eq!(user.first_name, Some(first_name));
+        assert_eq!(user.last_name, Some(last_name));
+    }
+}
