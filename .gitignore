@@ -9,3 +9,6 @@
 .idea/**/dictionaries
 .idea/**/shelf
 .idea/**/dataSources
+
+# Development files
+**/appconfig-dev.yml
