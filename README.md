@@ -27,7 +27,8 @@ As a user manager, Alexandrie assumes the following responsibilities:
 The following dependencies are required to run Alexandrie locally:
 
 * A Rust compiler (compatible with edition 2018) and Cargo,
-* A PostgreSQL (>= 13) server.
+* A PostgreSQL (>= 13) server,
+* `sqlx-cli`, which can be installed through Cargo by running `cargo install sqlx-cli`.
 
 While setting up and running a PostgreSQL server directly on the host machine is possible, this is currently unsupported
 and it is recommended to use the development stack instead.
@@ -51,13 +52,16 @@ docker-compose dev/docker-compose.yml up
 A few additional files need to be created in order to run Alexandrie, all relative to project root:
 
 * `./.env`, which is used for telling the tooling how to connect to the database. It should contain a `DATABASE_URL`
-environment variable of the following format (replace `docker-daemon-host` with an IP or hostname pointing to your
+  environment variable of the following format (replace `docker-daemon-host` with an IP or hostname pointing to your
   docker daemon):
+
 ```shell
 DATABASE_URL=postgresql://alexandrie:password@docker-daemon-host/alexandrie
 ```
-* `./appconfig.yml` offers defaults that assume that your docker daemon is running on `localhost`. If this is not the case, an additional configuration
-file `./appconfig-dev.yml` can be created:
+
+* `./appconfig.yml` offers defaults that assume that your docker daemon is running on `localhost`. If this is not the
+  case, an additional configuration file `./appconfig-dev.yml` can be created:
+
 ```yaml
 database:
   host: docker-daemon-host
@@ -65,13 +69,17 @@ database:
 
 #### Running Alexandrie itself
 
-Once the above dependencies are met, Alexandrie can simply be run using `cargo run`. On first run, the database will automatically
-be set up and the application will listen for HTTP connections on `localhost:8080`.
+Once the above dependencies are met, migrations must be applied to the database by running `sqlx migrate run` on first
+run. This is only necessary once or after new migrations are introduced.
+
+Alexandrie can then simply be run using `cargo run`, and the application will then listen for HTTP connections
+on `localhost:8080`.
 
 In order to verify that Alexandrie is running, you can use the health endpoint: `GET http://localhost:8080/v1/health`.
 
-Note that if your docker daemon is not running on `localhost` and you created a `appconfig-dev.yml` file while setting up
-the development stack, it will have to be passed as a parameter to Cargo:
+Note that if your docker daemon is not running on `localhost` and you created a `appconfig-dev.yml` file while setting
+up the development stack, it will have to be passed as a parameter to Cargo:
+
 ```shell
 cargo run -- --configuration-file appconfig-dev
 ```

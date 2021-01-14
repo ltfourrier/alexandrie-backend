@@ -12,3 +12,4 @@
 
 # Development files
 **/appconfig-dev.yml
+/.env
