@@ -1,20 +1,18 @@
-use std::str::FromStr;
-
 use actix_web::{web, App, HttpServer};
 use anyhow::Result;
 use log::LevelFilter;
 use simple_logger::SimpleLogger;
+use std::str::FromStr;
 
-use configuration::read_configuration;
-
-mod configuration;
+mod cfg;
 mod db;
 mod error;
 mod routes;
+mod utils;
 
 #[actix_web::main]
 async fn main() -> Result<()> {
-    let config = read_configuration()?;
+    let config = cfg::read_configuration()?;
 
     SimpleLogger::new()
         .with_level(LevelFilter::from_str(config.log.level.as_str())?)

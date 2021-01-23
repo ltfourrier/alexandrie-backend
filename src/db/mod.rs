@@ -1,8 +1,9 @@
+use crate::cfg::DatabaseConfiguration;
+
+use log::info;
 use sqlx::migrate::Migrator;
 use sqlx::postgres::PgPoolOptions;
-use sqlx::{Pool, Postgres, Result};
-
-use crate::configuration::DatabaseConfiguration;
+use sqlx::{PgPool, Result};
 
 pub mod users;
 
@@ -14,44 +15,21 @@ static MIGRATOR: Migrator = sqlx::migrate!();
 /// # Arguments
 ///
 /// * `config`: The configuration to use to connect and configuration the database.
-pub async fn init_db(db_config: &DatabaseConfiguration) -> Result<Pool<Postgres>> {
+pub async fn init_db(cfg: &DatabaseConfiguration) -> Result<PgPool> {
     let db_pool = PgPoolOptions::new()
-        .max_connections(db_config.max_connections)
+        .max_connections(cfg.max_connections)
         .connect(
             format!(
                 "postgresql://{}:{}@{}:{}/{}",
-                db_config.username,
-                db_config.password,
-                db_config.host,
-                db_config.port,
-                db_config.database
+                cfg.username, cfg.password, cfg.host, cfg.port, cfg.database
             )
             .as_str(),
         )
         .await?;
 
+    info!("Running migrations...");
     MIGRATOR.run(&db_pool).await?;
+    info!("Migrations ran successfully!");
 
     return Ok(db_pool);
-}
-
-#[cfg(test)]
-mod tests {
-    use sqlx::{Pool, Postgres, Result};
-
-    use crate::configuration::DatabaseConfiguration;
-    use crate::db::init_db;
-
-    /// Init the database with the test configuration, running against the development stack.
-    pub async fn init_test_db() -> Result<Pool<Postgres>> {
-        init_db(&DatabaseConfiguration {
-            username: String::from("alexandrie"),
-            password: String::from("password"),
-            host: String::from("localhost"),
-            port: 5432,
-            database: String::from("alexandrie"),
-            max_connections: 1,
-        })
-        .await
-    }
 }

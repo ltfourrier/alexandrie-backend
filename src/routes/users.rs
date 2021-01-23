@@ -1,9 +1,10 @@
+use crate::db::users as db;
+use crate::error::ApplicationError;
+use crate::utils;
+
 use actix_web::{post, web, HttpResponse, Result};
 use serde::Deserialize;
 use sqlx::PgPool;
-
-use crate::db::users as db;
-use crate::error::DatabaseError;
 
 #[derive(Deserialize)]
 struct PostUsers {
@@ -22,15 +23,16 @@ async fn post_users(
 
     db::create_user(
         db_pool.get_ref(),
-        db::CreateUser {
+        &db::UserCreation {
             username: user.username,
             email: user.email,
             first_name: user.first_name,
             last_name: user.last_name,
+            salt: utils::crypto::generate_salt(),
         },
     )
     .await
-    .map_err(|err| -> DatabaseError { err.into() })?;
+    .map_err(|err| -> ApplicationError { err.into() })?;
 
     Ok(HttpResponse::Created().finish())
 }

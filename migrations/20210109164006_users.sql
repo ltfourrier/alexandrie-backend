@@ -6,6 +6,6 @@ CREATE TABLE users
     first_name         character varying(255),
     last_name          character varying(255),
     encrypted_password bytea,
-    salt               bytea,
+    salt               bytea                         NOT NULL,
     creation_date_utc  timestamp DEFAULT (now() AT TIME ZONE 'utc')
 );

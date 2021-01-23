@@ -13,8 +13,9 @@ log = "0.4"
 simple_logger = "1.11"
 config = "0.10"
 derive_more = "0.99"
+rand = "0.8"
+rand_chacha = "0.3"
 
 [dev-dependencies]
 actix-rt = "1.1"
 fake = "2.4"
-rand = "0.8"

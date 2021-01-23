@@ -314,6 +314,7 @@ dependencies = [
  "fake",
  "log",
  "rand 0.8.1",
+ "rand_chacha 0.3.0",
  "serde 1.0.118",
  "simple_logger",
  "sqlx",
